@@ -1,4 +1,4 @@
-# 🏛️ Campus PArt - Projeto 2
+# 🏛️ Campus Party - Projeto 2
 
 > Chatbot inteligente especializado em serviços governamentais brasileiros desenvolvido para a Campus Party SE 2025
 
