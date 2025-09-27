@@ -532,11 +532,11 @@ export class FAQService {
     if (searchText.includes('comprovante') && (searchText.includes('renda') || searchText.includes('salario'))) {
       response += `Para obter comprovante de renda:
 
-1. **Trabalhador CLT**: Solicite ao RH da empresa
-2. **Autônomo**: Acesse gov.br/receitafederal > Declaração de Imposto de Renda
-3. **Aposentado/Pensionista**: Use o app "Meu INSS" > Extrato de Pagamento
-4. **Servidor Público**: Portal do órgão empregador
-5. **MEI**: Portal do Empreendedor > Relatórios
+1. Trabalhador CLT: Solicite ao RH da empresa
+2. Autônomo: Acesse gov.br/receitafederal > Declaração de Imposto de Renda
+3. Aposentado/Pensionista: Use o app "Meu INSS" > Extrato de Pagamento
+4. Servidor Público: Portal do órgão empregador
+5. MEI: Portal do Empreendedor > Relatórios
 
 🔗 Links: gov.br/receitafederal | gov.br/inss`;
       return response;
@@ -559,10 +559,10 @@ export class FAQService {
       response += `Para questões relacionadas a impostos:
 
 1. Acesse gov.br/receitafederal
-2. **Declaração IR**: Use o programa IRPF ou app "Meu Imposto de Renda"
-3. **CPF**: Seção "Cadastros" > "CPF"
-4. **Restituição**: Consulte pelo CPF na seção específica
-5. **Dúvidas**: Use o chat virtual ou ligue 146
+2. Declaração IR: Use o programa IRPF ou app "Meu Imposto de Renda"
+3. CPF: Seção "Cadastros" > "CPF"
+4. Restituição: Consulte pelo CPF na seção específica
+5. Dúvidas: Use o chat virtual ou ligue 146
 
 💡 Prazo da declaração: Geralmente de março a maio de cada ano.`;
       return response;
