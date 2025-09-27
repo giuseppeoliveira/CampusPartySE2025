@@ -283,19 +283,22 @@ export function ChatScreen({ onBackToWelcome }: ChatScreenProps) {
 
   const handleVoiceTranscript = (transcript: string) => {
     if (transcript.trim()) {
-      const cleanedTranscript = transcript.toLowerCase();
+      const cleanedTranscript = transcript.trim();
       
       // Comandos de voz para limpar
-      if (cleanedTranscript.includes('apagar') || 
-          cleanedTranscript.includes('limpar') || 
-          cleanedTranscript.includes('deletar') ||
-          cleanedTranscript === 'clear') {
+      if (cleanedTranscript.toLowerCase().includes('apagar') || 
+          cleanedTranscript.toLowerCase().includes('limpar') || 
+          cleanedTranscript.toLowerCase().includes('deletar') ||
+          cleanedTranscript.toLowerCase() === 'clear') {
         setInputText('');
         showToast('Texto limpo!', 'success');
         return;
       }
       
-      setInputText(transcript);
+      // Atualizar o input com o transcript apenas se estiver vazio ou diferente
+      if (!inputText || inputText !== cleanedTranscript) {
+        setInputText(cleanedTranscript);
+      }
     }
   };
 

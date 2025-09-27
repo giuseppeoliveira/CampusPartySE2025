@@ -35,6 +35,7 @@ export const VoiceControls = memo<VoiceControlsProps>(({
     stopListening,
     isListening,
     transcript,
+    clearTranscript,
     isSupported,
     error,
     clearError
@@ -44,8 +45,10 @@ export const VoiceControls = memo<VoiceControlsProps>(({
   React.useEffect(() => {
     if (transcript && onTranscriptChange) {
       onTranscriptChange(transcript);
+      // Limpar transcript após ser usado para evitar duplicação
+      setTimeout(() => clearTranscript(), 100);
     }
-  }, [transcript, onTranscriptChange]);
+  }, [transcript, onTranscriptChange, clearTranscript]);
 
   // Notificar erros via callback
   React.useEffect(() => {

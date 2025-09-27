@@ -29,6 +29,7 @@ export interface UseVoiceInteractionReturn {
   stopListening: () => void;
   isListening: boolean;
   transcript: string;
+  clearTranscript: () => void;
   
   // Configurações
   voiceSettings: VoiceSettings;
@@ -291,6 +292,10 @@ export const useVoiceInteraction = (): UseVoiceInteractionReturn => {
     setError(null);
   }, []);
   
+  const clearTranscript = useCallback(() => {
+    setTranscript('');
+  }, []);
+  
   // Cleanup ao desmontar
   useEffect(() => {
     return () => {
@@ -317,6 +322,7 @@ export const useVoiceInteraction = (): UseVoiceInteractionReturn => {
     stopListening,
     isListening,
     transcript,
+    clearTranscript,
     
     // Configurações
     voiceSettings,
