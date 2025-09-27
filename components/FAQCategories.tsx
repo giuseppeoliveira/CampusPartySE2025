@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ChevronDown, ChevronUp, Book, FileText, Heart, GraduationCap, Briefcase, Settings } from 'lucide-react';
+import { ChevronDown, ChevronUp, Book, FileText, Heart, GraduationCap, Briefcase, Settings, ArrowLeft } from 'lucide-react';
 import { Card } from './ui/card';
 import { Badge } from './ui/badge';
 import { Button } from './ui/button';
@@ -8,9 +8,10 @@ import { govFAQ, FAQItem } from './FAQSystem';
 
 interface FAQCategoriesProps {
   onQuestionSelect: (question: string) => void;
+  onBack?: () => void;
 }
 
-export function FAQCategories({ onQuestionSelect }: FAQCategoriesProps) {
+export function FAQCategories({ onQuestionSelect, onBack }: FAQCategoriesProps) {
   const [openCategories, setOpenCategories] = useState<string[]>(['Documentos']);
 
   const toggleCategory = (category: string) => {
@@ -44,13 +45,25 @@ export function FAQCategories({ onQuestionSelect }: FAQCategoriesProps) {
   }, {} as Record<string, FAQItem[]>);
 
   return (
-    <div className="p-4 bg-blue-50">
-      <div className="flex items-center mb-3">
-        <Book className="h-4 w-4 text-blue-700 mr-2" />
-        <h3 className="font-medium text-blue-900">Explorar FAQ por Categoria</h3>
+    <div className="flex flex-col h-full bg-blue-50">
+      <div className="p-4 border-b border-blue-200">
+        <div className="flex items-center mb-3">
+          {onBack && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={onBack}
+              className="mr-2 text-blue-700 hover:bg-blue-100 p-1"
+            >
+              <ArrowLeft className="h-4 w-4" />
+            </Button>
+          )}
+          <Book className="h-4 w-4 text-blue-700 mr-2" />
+          <h3 className="font-medium text-blue-900">Explorar FAQ por Categoria</h3>
+        </div>
       </div>
       
-      <div className="space-y-2">
+      <div className="flex-1 overflow-y-auto p-4 space-y-2">
         {Object.entries(categorizedFAQ).map(([category, items]) => (
           <Collapsible 
             key={category}
@@ -94,12 +107,12 @@ export function FAQCategories({ onQuestionSelect }: FAQCategoriesProps) {
             </Card>
           </Collapsible>
         ))}
-      </div>
-      
-      <div className="mt-4 p-3 bg-white rounded-lg border border-blue-200">
-        <p className="text-xs text-blue-700">
-          💡 <strong>Dica:</strong> Clique em qualquer pergunta para ver a resposta completa com passo a passo detalhado!
-        </p>
+        
+        <div className="mt-4 p-3 bg-white rounded-lg border border-blue-200">
+          <p className="text-xs text-blue-700">
+            💡 <strong>Dica:</strong> Clique em qualquer pergunta para ver a resposta completa com passo a passo detalhado!
+          </p>
+        </div>
       </div>
     </div>
   );

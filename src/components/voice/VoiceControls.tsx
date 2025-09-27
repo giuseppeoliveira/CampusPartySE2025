@@ -6,6 +6,7 @@ import { VoiceSettings } from './VoiceSettings';
 interface VoiceControlsProps {
   text?: string;
   onTranscriptChange?: (transcript: string) => void;
+  onError?: (error: string) => void;
   showTTSControls?: boolean;
   showSTTControls?: boolean;
   showSettings?: boolean;
@@ -15,6 +16,7 @@ interface VoiceControlsProps {
 export const VoiceControls = memo<VoiceControlsProps>(({
   text = '',
   onTranscriptChange,
+  onError,
   showTTSControls = true,
   showSTTControls = true,
   showSettings = false,
@@ -44,6 +46,14 @@ export const VoiceControls = memo<VoiceControlsProps>(({
       onTranscriptChange(transcript);
     }
   }, [transcript, onTranscriptChange]);
+
+  // Notificar erros via callback
+  React.useEffect(() => {
+    if (error && onError) {
+      onError(error);
+      clearError(); // Limpar erro após notificar
+    }
+  }, [error, onError, clearError]);
 
   // Controles TTS
   const handleSpeak = () => {
@@ -178,27 +188,6 @@ export const VoiceControls = memo<VoiceControlsProps>(({
       {transcript && isListening && (
         <div className="text-sm text-gray-600 bg-gray-50 px-3 py-1 rounded-lg max-w-xs truncate">
           {transcript}
-        </div>
-      )}
-
-      {/* Mensagem de erro */}
-      {error && (
-        <div className="text-sm text-red-700 bg-red-50 border border-red-200 px-3 py-2 rounded-lg max-w-sm shadow-sm">
-          <div className="flex items-start justify-between gap-2">
-            <span className="flex-1 leading-relaxed">{error}</span>
-            <button
-              onClick={clearError}
-              className="text-red-400 hover:text-red-600 font-bold text-lg leading-none"
-              title="Fechar"
-            >
-              ×
-            </button>
-          </div>
-          {error.includes('Permissão negada') && (
-            <div className="mt-2 text-xs text-red-600 border-t border-red-200 pt-2">
-              💡 <strong>Como permitir:</strong> Chrome/Edge → Clique no 🔒 na barra de endereços → Microfone: Permitir
-            </div>
-          )}
         </div>
       )}
 

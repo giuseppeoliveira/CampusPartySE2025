@@ -1,7 +1,7 @@
 import { Button } from './ui/button';
 import { Card } from './ui/card';
 import { MessageCircle, Users, Shield, Globe } from 'lucide-react';
-import { ImageWithFallback } from './figma/ImageWithFallback';
+import { ModernLogo } from './ui/ModernLogo';
 
 interface WelcomeScreenProps {
   onStartChat: () => void;
@@ -14,11 +14,7 @@ export function WelcomeScreen({ onStartChat }: WelcomeScreenProps) {
       <div className="flex-1 flex flex-col items-center justify-center p-8">
         <div className="mb-8 relative">
           <div className="w-32 h-32 bg-gradient-to-br from-blue-600 to-green-600 rounded-full flex items-center justify-center shadow-2xl">
-            <ImageWithFallback 
-              src="https://images.unsplash.com/photo-1611488006018-95b79a137ff5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxicmF6aWwlMjBnb3Zlcm5tZW50JTIwZGlnaXRhbCUyMGxvZ298ZW58MXx8fHwxNzU4ODM3OTkzfDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral"
-              alt="Logo Companheiro Digital"
-              className="w-20 h-20 rounded-full object-cover"
-            />
+            <ModernLogo size={80} className="drop-shadow-lg" />
           </div>
           <div className="absolute -bottom-2 -right-2 w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
             <MessageCircle className="w-4 h-4 text-white" />
