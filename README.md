@@ -60,7 +60,23 @@ npm run preview
 
 ## 📱 Versão Mobile (APK)
 
-Este projeto também foi convertido em aplicativo Android usando Capacitor e Android Studio. Para gerar o APK:
+### 🚀 APK Pronto para Instalação
+
+Na pasta `APK/` você encontra o aplicativo **CompanheiroDigital** pronto para instalação em dispositivos Android:
+
+- 📦 **Versões disponíveis**: V0.01, V1.00, v1.02, v1.03
+- ⚡ **Recomendado**: Sempre utilize a **versão mais recente** (`CompanheiroDigital_v1.03.apk`)
+- 📲 **Instalação**: Baixe o arquivo `.apk` e instale diretamente no seu Android
+- 🔒 **Permissões**: O app pode solicitar permissão para microfone (funcionalidade de voz)
+
+### 📥 Como instalar:
+
+1. Baixe o arquivo `APK/CompanheiroDigital_v1.03.apk`
+2. No seu Android, vá em **Configurações** > **Segurança** > Habilite **"Fontes desconhecidas"**
+3. Toque no arquivo APK baixado para instalar
+4. Pronto! O CompanheiroDigital estará disponível no seu dispositivo
+
+### 🔧 Para desenvolvedores - Gerar nova versão:
 
 ```bash
 # Build para produção
