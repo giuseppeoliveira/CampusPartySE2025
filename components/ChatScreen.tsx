@@ -1,10 +1,10 @@
-import { useState } from 'react';
-import { Send, Trash2, Download, Share, ArrowLeft, ExternalLink, CheckCircle, Book } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Send, Trash2, Download, Share, ArrowLeft, ExternalLink, CheckCircle } from 'lucide-react';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Card } from './ui/card';
 import { Badge } from './ui/badge';
-import { FAQService, FAQItem } from './FAQSystem';
+import { FAQService, FAQItem, govFAQ } from './FAQSystem';
 import { FAQCategories } from './FAQCategories';
 import { VoiceControls } from '../src/components/voice/VoiceControls';
 import { ModernLogo } from './ui/ModernLogo';
@@ -39,6 +39,8 @@ export function ChatScreen({ onBackToWelcome }: ChatScreenProps) {
   ]);
   const [inputText, setInputText] = useState('');
   const [showFAQCategories, setShowFAQCategories] = useState(false);
+  const [showSimpleFAQ, setShowSimpleFAQ] = useState(false);
+  const [showFrequentQuestions, setShowFrequentQuestions] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [toasts, setToasts] = useState<Array<{
     id: string;
@@ -46,6 +48,24 @@ export function ChatScreen({ onBackToWelcome }: ChatScreenProps) {
     type: 'success' | 'error' | 'warning' | 'info';
     duration?: number;
   }>>([]);
+
+  // Fechar FAQ simples ao clicar fora
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as HTMLElement;
+      if (showSimpleFAQ && !target.closest('.faq-dropdown') && !target.closest('[data-faq-button]')) {
+        setShowSimpleFAQ(false);
+      }
+    };
+
+    if (showSimpleFAQ) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showSimpleFAQ]);
 
   const handleSendMessage = async () => {
     if (inputText.trim() && !isProcessing) {
@@ -377,6 +397,8 @@ export function ChatScreen({ onBackToWelcome }: ChatScreenProps) {
     if (!isProcessing) {
       setIsProcessing(true);
       setShowFAQCategories(false);
+      setShowSimpleFAQ(false);
+      setShowFrequentQuestions(false);
       
       // Criar mensagem do usuário com a pergunta
       const newUserMessage: Message = {
@@ -438,10 +460,11 @@ export function ChatScreen({ onBackToWelcome }: ChatScreenProps) {
           <Button
             variant="ghost"
             size="sm"
-            onClick={() => setShowFAQCategories(!showFAQCategories)}
+            onClick={() => setShowSimpleFAQ(!showSimpleFAQ)}
             className="text-white hover:bg-white/20"
+            data-faq-button
           >
-            <Book className="h-5 w-5" />
+            FAQ
           </Button>
           <Button
             variant="ghost"
@@ -454,8 +477,108 @@ export function ChatScreen({ onBackToWelcome }: ChatScreenProps) {
         </div>
       </div>
 
-      {/* FAQ Categorias (tela cheia) ou Chat Area */}
-      {showFAQCategories ? (
+      {/* FAQ Simples (dropdown) */}
+      {showSimpleFAQ && (
+        <div className="faq-dropdown absolute top-16 right-4 z-50 bg-white border border-gray-200 rounded-lg shadow-lg max-w-sm w-80">
+          <div className="p-4 border-b border-gray-100">
+            <h3 className="font-medium text-gray-900">FAQ Rápido</h3>
+          </div>
+          <div className="max-h-96 overflow-y-auto">
+            {govFAQ.slice(0, 6).map((faq) => (
+              <button
+                key={faq.id}
+                onClick={() => {
+                  handleFAQQuestionSelect(faq.question);
+                  setShowSimpleFAQ(false);
+                }}
+                className="w-full p-3 text-left hover:bg-gray-50 border-b border-gray-50 last:border-b-0"
+              >
+                <p className="text-sm text-gray-800 font-medium">{faq.question}</p>
+                <p className="text-xs text-gray-500 mt-1">{faq.category}</p>
+              </button>
+            ))}
+          </div>
+          <div className="p-3 border-t border-gray-100">
+            <button
+              onClick={() => {
+                setShowSimpleFAQ(false);
+                setShowFAQCategories(true);
+              }}
+              className="text-xs text-blue-600 hover:text-blue-800"
+            >
+              Ver todas as categorias →
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Perguntas Frequentes (tela cheia) */}
+      {showFrequentQuestions ? (
+        <div className="flex-1 bg-gradient-to-br from-blue-50 to-indigo-50 overflow-hidden">
+          <div className="h-full flex flex-col">
+            {/* Header */}
+            <div className="p-4 bg-white border-b border-gray-200">
+              <div className="flex items-center justify-between">
+                <h2 className="text-xl font-semibold text-gray-900">Perguntas Mais Frequentes</h2>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setShowFrequentQuestions(false)}
+                  className="text-gray-500 hover:text-gray-700"
+                >
+                  <ArrowLeft className="h-4 w-4 mr-1" />
+                  Voltar
+                </Button>
+              </div>
+              <p className="text-sm text-gray-600 mt-1">As 5 perguntas mais comuns dos usuários</p>
+            </div>
+
+            {/* Lista de Perguntas Frequentes */}
+            <div className="flex-1 overflow-y-auto p-4 space-y-3">
+              {[
+                govFAQ.find(faq => faq.id === "cpf-emitir"),
+                govFAQ.find(faq => faq.id === "inss-consultar"),
+                govFAQ.find(faq => faq.id === "sus-cartao"),
+                govFAQ.find(faq => faq.id === "auxilio-brasil"),
+                govFAQ.find(faq => faq.id === "conta-govbr")
+              ].filter(Boolean).map((faq) => (
+                <Card 
+                  key={faq!.id}
+                  className="p-4 hover:shadow-md transition-shadow cursor-pointer bg-white"
+                  onClick={() => {
+                    handleFAQQuestionSelect(faq!.question);
+                    setShowFrequentQuestions(false);
+                  }}
+                >
+                  <div className="flex items-start justify-between">
+                    <div className="flex-1">
+                      <h3 className="font-medium text-gray-900 mb-2">{faq!.question}</h3>
+                      <p className="text-sm text-gray-600 mb-2">{faq!.answer}</p>
+                      <Badge variant="secondary" className="text-xs">
+                        {faq!.category}
+                      </Badge>
+                    </div>
+                    <ExternalLink className="h-4 w-4 text-gray-400 ml-2 flex-shrink-0" />
+                  </div>
+                </Card>
+              ))}
+            </div>
+
+            {/* Footer */}
+            <div className="p-4 bg-white border-t border-gray-200">
+              <button
+                onClick={() => {
+                  setShowFrequentQuestions(false);
+                  setShowFAQCategories(true);
+                }}
+                className="w-full text-center text-blue-600 hover:text-blue-800 font-medium"
+              >
+                Ver todas as categorias do FAQ →
+              </button>
+            </div>
+          </div>
+        </div>
+      ) : showFAQCategories ? (
         <div className="flex-1 overflow-hidden">
           <FAQCategories 
             onQuestionSelect={handleFAQQuestionSelect}
@@ -468,12 +591,11 @@ export function ChatScreen({ onBackToWelcome }: ChatScreenProps) {
           {/* Barra de Perguntas Frequentes - Sempre visível */}
           <div className="p-3 bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-blue-100 sticky top-0 z-10">
             <Button
-              onClick={() => setShowFAQCategories(true)}
+              onClick={() => setShowFrequentQuestions(true)}
               className="w-full bg-white hover:bg-blue-50 text-blue-700 border border-blue-200 shadow-sm transition-all duration-200 hover:shadow-md"
               variant="outline"
             >
-              <Book className="h-4 w-4 mr-2" />
-              FAQ
+              Perguntas Frequentes
             </Button>
           </div>
 

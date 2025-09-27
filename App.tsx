@@ -13,14 +13,17 @@ export default function App() {
     setCurrentScreen('welcome');
   };
 
+  // Debug: Adicionando um indicador para testar se a aplicação carrega
+  console.log('App component loaded, current screen:', currentScreen);
+
   return (
-    <>
+    <div style={{ minHeight: '100vh', backgroundColor: 'white' }}>
       {currentScreen === 'welcome' && (
         <WelcomeScreen onStartChat={handleStartChat} />
       )}
       {currentScreen === 'chat' && (
         <ChatScreen onBackToWelcome={handleBackToWelcome} />
       )}
-    </>
+    </div>
   );
 }

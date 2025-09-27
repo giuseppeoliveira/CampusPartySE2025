@@ -14,7 +14,7 @@ export function WelcomeScreen({ onStartChat }: WelcomeScreenProps) {
       <div className="flex-1 flex flex-col items-center justify-center p-8">
         <div className="mb-8 relative">
           <div className="w-32 h-32 bg-gradient-to-br from-blue-600 to-green-600 rounded-full flex items-center justify-center shadow-2xl">
-            <ModernLogo size={80} className="drop-shadow-lg" />
+            <ModernLogo size={64} className="drop-shadow-lg" />
           </div>
           <div className="absolute -bottom-2 -right-2 w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
             <MessageCircle className="w-4 h-4 text-white" />
