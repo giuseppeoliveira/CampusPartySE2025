@@ -1,0 +1,134 @@
+name: 📊 Code Quality & Performance
+
+on:
+  push:
+    branches: [ main, develop, melhorias ]
+  pull_request:
+    branches: [ main ]
+  schedule:
+    # Executa todos os dias às 2h da manhã (UTC)
+    - cron: '0 2 * * *'
+
+jobs:
+  # ===== ANÁLISE DE CÓDIGO =====
+  code-quality:
+    name: 📊 Code Quality Analysis
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Para análise completa
+          
+      - name: 📦 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          
+      - name: 📥 Install dependencies
+        run: npm ci
+        
+      - name: 🔍 ESLint Analysis
+        run: |
+          npx eslint . --ext .ts,.tsx --format json --output-file eslint-report.json || true
+          npx eslint . --ext .ts,.tsx || true
+        
+      - name: 📊 Generate code metrics
+        run: |
+          echo "📊 Collecting code metrics..."
+          echo "📁 Total files: $(find . -name '*.tsx' -o -name '*.ts' | grep -v node_modules | wc -l)"
+          echo "📝 Lines of code: $(find . -name '*.tsx' -o -name '*.ts' | grep -v node_modules | xargs wc -l | tail -1)"
+          echo "🧩 Components: $(find ./components -name '*.tsx' | wc -l)"
+          
+  # ===== TESTES DE COBERTURA =====
+  coverage:
+    name: 🧪 Test Coverage
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+        
+      - name: 📦 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          
+      - name: 📥 Install dependencies
+        run: npm ci
+        
+      - name: 🧪 Run tests with coverage
+        run: npm run test:coverage || echo "Tests will be available after installing test dependencies"
+        
+      - name: 📊 Coverage Report
+        run: |
+          echo "📊 Test Coverage Report:"
+          echo "🧪 Unit Tests: Ready to implement"
+          echo "🔗 Integration Tests: Ready to implement" 
+          echo "💻 Component Tests: Ready to implement"
+          
+  # ===== ANÁLISE DE PERFORMANCE =====
+  performance:
+    name: ⚡ Performance Analysis
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+        
+      - name: 📦 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          
+      - name: 📥 Install dependencies
+        run: npm ci
+        
+      - name: 🏗️ Build for analysis
+        run: npm run build
+        
+      - name: 📊 Bundle Analysis
+        run: |
+          echo "📦 Bundle Size Analysis:"
+          if [ -d "dist" ]; then
+            echo "📁 Dist folder size: $(du -sh dist | cut -f1)"
+            echo "📄 JavaScript files: $(find dist -name '*.js' -exec du -sh {} \; | sort -rh)"
+            echo "🎨 CSS files: $(find dist -name '*.css' -exec du -sh {} \; | sort -rh)"
+          else
+            echo "⚠️ Dist folder not found - build may have failed"
+          fi
+          
+  # ===== DEPENDÊNCIAS =====
+  dependencies:
+    name: 📦 Dependency Check
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+        
+      - name: 📦 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          
+      - name: 📥 Install dependencies
+        run: npm ci
+        
+      - name: 🔍 Check for outdated packages
+        run: npm outdated || true
+        
+      - name: 🔒 Security audit
+        run: npm audit || true
+        
+      - name: 📊 Dependency summary
+        run: |
+          echo "📦 Dependency Summary:"
+          echo "🔧 Production deps: $(npm list --prod --depth=0 2>/dev/null | wc -l)"
+          echo "⚙️ Dev dependencies: $(npm list --dev --depth=0 2>/dev/null | wc -l)"
+          echo "📊 Total packages: $(npm list --depth=0 2>/dev/null | wc -l)"

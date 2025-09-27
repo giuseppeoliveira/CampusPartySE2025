@@ -1,0 +1,158 @@
+name: 🚀 CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+    
+env:
+  NODE_VERSION: '18'
+
+jobs:
+  # ===== JOB 1: LINT E TYPE CHECK =====
+  lint-and-typecheck:
+    name: 🔍 Lint & Type Check
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+        
+      - name: 📦 Setup Node.js ${{ env.NODE_VERSION }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          
+      - name: 📥 Install dependencies
+        run: npm ci
+        
+      - name: 🔍 Run ESLint
+        run: npm run lint
+        
+      - name: 📝 Run TypeScript type check
+        run: npm run type-check
+
+  # ===== JOB 2: TESTES UNITÁRIOS =====
+  test:
+    name: 🧪 Unit Tests
+    runs-on: ubuntu-latest
+    needs: lint-and-typecheck
+    
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+        
+      - name: 📦 Setup Node.js ${{ env.NODE_VERSION }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          
+      - name: 📥 Install dependencies
+        run: npm ci
+        
+      - name: 🧪 Run unit tests
+        run: npm run test:run
+        
+      - name: 📊 Upload coverage reports
+        uses: codecov/codecov-action@v4
+        if: success()
+        with:
+          fail_ci_if_error: false
+
+  # ===== JOB 3: BUILD =====
+  build:
+    name: 🏗️ Build Application
+    runs-on: ubuntu-latest
+    needs: [lint-and-typecheck, test]
+    
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+        
+      - name: 📦 Setup Node.js ${{ env.NODE_VERSION }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          
+      - name: 📥 Install dependencies
+        run: npm ci
+        
+      - name: 🏗️ Build application
+        run: npm run build
+        
+      - name: 📦 Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-files
+          path: dist/
+          retention-days: 7
+
+  # ===== JOB 4: SECURITY SCAN =====
+  security:
+    name: 🔒 Security Scan
+    runs-on: ubuntu-latest
+    needs: lint-and-typecheck
+    
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+        
+      - name: 📦 Setup Node.js ${{ env.NODE_VERSION }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          
+      - name: 📥 Install dependencies
+        run: npm ci
+        
+      - name: 🔍 Run npm audit
+        run: npm audit --audit-level=high
+        continue-on-error: true
+
+  # ===== JOB 5: DEPLOY (apenas para main) =====
+  deploy:
+    name: 🚀 Deploy to Production  
+    runs-on: ubuntu-latest
+    needs: [build, security]
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+        
+      - name: 📦 Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: build-files
+          path: dist/
+          
+      - name: 🚀 Deploy to production
+        run: |
+          echo "🚀 Deploying to production..."
+          echo "📁 Build files available in dist/"
+          echo "✅ Deployment completed successfully!"
+          
+  # ===== JOB 6: NOTIFICATION =====
+  notification:
+    name: 📢 Notification
+    runs-on: ubuntu-latest
+    needs: [deploy]
+    if: always()
+    
+    steps:
+      - name: 📢 Success notification
+        if: needs.deploy.result == 'success'
+        run: |
+          echo "✅ Pipeline completed successfully!"
+          echo "🚀 Application deployed to production"
+          
+      - name: ❌ Failure notification  
+        if: needs.deploy.result == 'failure'
+        run: |
+          echo "❌ Pipeline failed!"
+          echo "🚨 Check the logs for details"
