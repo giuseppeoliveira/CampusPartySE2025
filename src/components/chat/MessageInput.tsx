@@ -4,16 +4,15 @@
  */
 
 import { memo, useCallback, KeyboardEvent } from 'react';
-import { Mic, Send } from 'lucide-react';
+import { Send } from 'lucide-react';
 import { Button } from '../../../components/ui/button';
 import { Input } from '../../../components/ui/input';
+import { VoiceControls } from '../voice/VoiceControls';
 
 interface MessageInputProps {
   readonly value: string;
   readonly onChange: (value: string) => void;
   readonly onSend: () => void;
-  readonly onToggleRecording: () => void;
-  readonly isRecording: boolean;
   readonly isProcessing: boolean;
   readonly placeholder?: string;
 }
@@ -22,8 +21,6 @@ export const MessageInput = memo<MessageInputProps>(({
   value,
   onChange,
   onSend,
-  onToggleRecording,
-  isRecording,
   isProcessing,
   placeholder = "Pergunte sobre serviços públicos..."
 }) => {
@@ -32,6 +29,12 @@ export const MessageInput = memo<MessageInputProps>(({
       onSend();
     }
   }, [onSend, isProcessing]);
+
+  const handleTranscriptChange = useCallback((transcript: string) => {
+    if (transcript.trim()) {
+      onChange(transcript);
+    }
+  }, [onChange]);
 
   const canSend = value.trim() && !isProcessing;
 
@@ -60,25 +63,14 @@ export const MessageInput = memo<MessageInputProps>(({
           </Button>
         </div>
         
-        <Button
-          size="lg"
-          variant={isRecording ? "destructive" : "secondary"}
-          onClick={onToggleRecording}
-          disabled={isProcessing}
-          className="h-12 w-12 rounded-full p-0"
-          aria-label={isRecording ? "Parar gravação" : "Iniciar gravação"}
-        >
-          <Mic className={`h-5 w-5 ${isRecording ? 'animate-pulse' : ''}`} />
-        </Button>
+        {/* Voice Controls com STT */}
+        <VoiceControls 
+          onTranscriptChange={handleTranscriptChange}
+          showTTSControls={false}
+          showSTTControls={true}
+          className="shrink-0"
+        />
       </div>
-
-      {isRecording && (
-        <div className="mt-2 text-center">
-          <span className="text-sm text-muted-foreground animate-pulse">
-            🔴 Gravando... Toque novamente para parar
-          </span>
-        </div>
-      )}
     </div>
   );
 });

@@ -11,6 +11,7 @@ import { Badge } from '../../../components/ui/badge';
 import { Message, FAQItem } from '../../types';
 import { WhatsAppUtils, DateUtils } from '../../utils';
 import { TextRenderer, FormattedLine } from '../../utils/text-renderer';
+import { VoiceControls } from '../voice/VoiceControls';
 
 interface MessageItemProps {
   readonly message: Message;
@@ -94,28 +95,40 @@ export const MessageItem = memo<MessageItemProps>(({
             {DateUtils.formatTime(message.timestamp)}
           </span>
           
-          {!isUser && message.hasAudio && (
-            <div className="flex space-x-1">
-              <Button
-                size="sm"
-                variant="ghost"
-                onClick={handleDownloadAudio}
-                className="h-6 w-6 p-0 hover:bg-green-100"
-                aria-label="Baixar áudio"
-              >
-                <Download className="h-3 w-3" />
-              </Button>
-              <Button
-                size="sm"
-                variant="ghost"
-                onClick={handleShareWhatsApp}
-                className="h-6 w-6 p-0 hover:bg-green-100"
-                aria-label="Compartilhar no WhatsApp"
-              >
-                <Share className="h-3 w-3" />
-              </Button>
-            </div>
-          )}
+          <div className="flex items-center space-x-2">
+            {/* Voice Controls para mensagens da IA */}
+            {!isUser && (
+              <VoiceControls 
+                text={message.text}
+                showTTSControls={true}
+                showSTTControls={false}
+                className="opacity-70 hover:opacity-100 transition-opacity"
+              />
+            )}
+            
+            {!isUser && message.hasAudio && (
+              <div className="flex space-x-1">
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  onClick={handleDownloadAudio}
+                  className="h-6 w-6 p-0 hover:bg-green-100"
+                  aria-label="Baixar áudio"
+                >
+                  <Download className="h-3 w-3" />
+                </Button>
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  onClick={handleShareWhatsApp}
+                  className="h-6 w-6 p-0 hover:bg-green-100"
+                  aria-label="Compartilhar no WhatsApp"
+                >
+                  <Share className="h-3 w-3" />
+                </Button>
+              </div>
+            )}
+          </div>
         </div>
       </Card>
     </div>
