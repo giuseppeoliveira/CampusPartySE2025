@@ -191,3 +191,64 @@
 html {
   font-size: var(--font-size);
 }
+
+/* ===== OTIMIZAÇÕES MOBILE CAPACITOR ===== */
+
+/* Prevent zoom and improve touch */
+html, body {
+  overscroll-behavior: none;
+  touch-action: manipulation;
+  -webkit-overflow-scrolling: touch;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-text-size-adjust: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* Safe areas para dispositivos com notch */
+body {
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
+}
+
+/* Botões touch-friendly */
+button, .btn, [role="button"] {
+  min-height: 44px;
+  min-width: 44px;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Input focus melhorado para mobile */
+input, textarea, select {
+  -webkit-user-select: text;
+  user-select: text;
+  font-size: 16px !important; /* Previne zoom no iOS */
+}
+
+/* Scrolls suaves */
+.scroll-smooth {
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Otimizações para performance */
+* {
+  -webkit-backface-visibility: hidden;
+  -webkit-transform: translate3d(0, 0, 0);
+  transform: translate3d(0, 0, 0);
+}
+
+/* Melhor experiência em dispositivos pequenos */
+@media (max-width: 640px) {
+  html {
+    font-size: 14px;
+  }
+  
+  .container {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+}
