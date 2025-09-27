@@ -1,5 +1,12 @@
 import { useState, useCallback, useRef, useEffect } from 'react';
-import '../types/speech';
+
+// Declarações de tipos para Web Speech API
+declare global {
+  interface Window {
+    SpeechRecognition: any;
+    webkitSpeechRecognition: any;
+  }
+}
 
 export interface VoiceSettings {
   rate: number;        // Velocidade da fala (0.1 - 10)
