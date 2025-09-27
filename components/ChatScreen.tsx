@@ -143,6 +143,71 @@ export function ChatScreen({ onBackToWelcome }: ChatScreenProps) {
     );
   };
 
+  // Função para renderizar texto formatado (markdown-like)
+  const renderFormattedText = (text: string) => {
+    const lines = text.split('\n');
+    
+    return (
+      <div className="space-y-2">
+        {lines.map((line, index) => {
+          // Linha vazia
+          if (!line.trim()) {
+            return <div key={index} className="h-1" />;
+          }
+          
+          // Títulos com **texto**
+          if (line.includes('**') && line.includes(':**')) {
+            const boldMatch = line.match(/\*\*(.*?)\*\*/);
+            if (boldMatch) {
+              const beforeBold = line.substring(0, line.indexOf('**'));
+              const boldText = boldMatch[1];
+              const afterBold = line.substring(line.indexOf('**') + boldMatch[0].length);
+              
+              return (
+                <div key={index} className="font-semibold text-gray-800 mt-3 mb-2">
+                  {beforeBold && renderTextWithClickableLinks(beforeBold)}
+                  <span className="font-bold">{boldText}</span>
+                  {afterBold && renderTextWithClickableLinks(afterBold)}
+                </div>
+              );
+            }
+          }
+          
+          // Listas com • ou números
+          if (line.trim().startsWith('•') || line.trim().startsWith('1️⃣') || line.trim().startsWith('2️⃣') || line.trim().startsWith('3️⃣') || line.trim().startsWith('4️⃣')) {
+            return (
+              <div key={index} className="flex items-start space-x-2 ml-2">
+                <span className="text-blue-600 font-medium flex-shrink-0">
+                  {line.trim().substring(0, line.trim().indexOf(' '))}
+                </span>
+                <span className="flex-1">
+                  {renderTextWithClickableLinks(line.trim().substring(line.trim().indexOf(' ') + 1))}
+                </span>
+              </div>
+            );
+          }
+          
+          // Sub-itens com espaçamento (começam com espaços)
+          if (line.startsWith('   •') || line.startsWith('  •')) {
+            return (
+              <div key={index} className="flex items-start space-x-2 ml-6">
+                <span className="text-gray-600">•</span>
+                <span>{renderTextWithClickableLinks(line.trim().substring(1).trim())}</span>
+              </div>
+            );
+          }
+          
+          // Texto normal
+          return (
+            <div key={index} className="leading-relaxed">
+              {renderTextWithClickableLinks(line)}
+            </div>
+          );
+        })}
+      </div>
+    );
+  };
+
   const renderFAQResponse = (faqItem: FAQItem) => {
     return (
       <div className="space-y-3">
@@ -379,7 +444,7 @@ export function ChatScreen({ onBackToWelcome }: ChatScreenProps) {
               
               {message.type === 'assistant' && message.faqItem ? 
                 renderFAQResponse(message.faqItem) : 
-                <div className="break-words">{renderTextWithClickableLinks(message.text)}</div>
+                <div className="break-words">{renderFormattedText(message.text)}</div>
               }
               
               {/* Sugestões de IA */}

@@ -640,9 +640,10 @@ export class FAQService {
 **Para "${query}":**
 
 1️⃣ Acesse gov.br e use a busca avançada
+
 2️⃣ Procure na seção do órgão responsável:
    • Documentos → Receita Federal, Cartórios
-   • Saúde → Ministério da Saúde, SUS
+   • Saúde → Ministério da Saúde, SUS  
    • Trabalho → Ministério do Trabalho
    • Educação → MEC, INEP
 
