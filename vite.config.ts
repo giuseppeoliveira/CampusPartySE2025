@@ -13,4 +13,22 @@ export default defineConfig({
       "@/lib": path.resolve(__dirname, "./lib"),
     },
   },
+  build: {
+    outDir: 'dist',
+    sourcemap: false,
+    minify: 'esbuild',
+    target: 'es2015',
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          vendor: ['react', 'react-dom'],
+          ui: ['lucide-react', '@radix-ui/react-dialog', '@radix-ui/react-accordion']
+        }
+      }
+    }
+  },
+  server: {
+    host: '0.0.0.0',
+    port: 5173
+  }
 })
