@@ -142,7 +142,29 @@ export const useVoiceInteraction = (): UseVoiceInteractionReturn => {
     };
     
     recognition.onerror = (event: any) => {
-      setError(`Erro no reconhecimento de voz: ${event.error}`);
+      let errorMessage = '';
+      
+      switch (event.error) {
+        case 'not-allowed':
+          errorMessage = '🎤 Permissão negada. Clique no ícone do cadeado/microfone na barra de endereços e permita o acesso.';
+          break;
+        case 'no-speech':
+          errorMessage = '🔇 Nenhuma fala detectada. Tente falar mais próximo do microfone.';
+          break;
+        case 'audio-capture':
+          errorMessage = '🎤 Erro no microfone. Verifique se está conectado e funcionando.';
+          break;
+        case 'network':
+          errorMessage = '🌐 Erro de conexão. Verifique sua internet.';
+          break;
+        case 'service-not-allowed':
+          errorMessage = '❌ Serviço de reconhecimento não permitido neste site.';
+          break;
+        default:
+          errorMessage = `Erro no reconhecimento de voz: ${event.error}`;
+      }
+      
+      setError(errorMessage);
       setIsListening(false);
     };
     
@@ -228,8 +250,21 @@ export const useVoiceInteraction = (): UseVoiceInteractionReturn => {
   }, [isSupported.tts, isPaused]);
   
   // Funções STT
-  const startListening = useCallback(() => {
+  const startListening = useCallback(async () => {
     if (!isSupported.stt || !recognitionRef.current || isListening) return;
+    
+    // Verificar se há permissão de microfone
+    try {
+      if (navigator.permissions) {
+        const permission = await navigator.permissions.query({ name: 'microphone' as PermissionName });
+        if (permission.state === 'denied') {
+          setError('🎤 Acesso ao microfone negado. Vá nas configurações do navegador e permita o acesso ao microfone para este site.');
+          return;
+        }
+      }
+    } catch (permissionError) {
+      console.log('Não foi possível verificar permissões', permissionError);
+    }
     
     setTranscript('');
     setError(null);
@@ -237,7 +272,7 @@ export const useVoiceInteraction = (): UseVoiceInteractionReturn => {
     try {
       recognitionRef.current.start();
     } catch (error) {
-      setError('Erro ao iniciar reconhecimento de voz');
+      setError('🎤 Erro ao iniciar reconhecimento de voz. Tente novamente em alguns segundos.');
     }
   }, [isSupported.stt, isListening]);
   
