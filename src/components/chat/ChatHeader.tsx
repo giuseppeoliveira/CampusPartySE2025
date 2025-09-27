@@ -4,7 +4,7 @@
  */
 
 import { memo } from 'react';
-import { ArrowLeft, Book, Trash2 } from 'lucide-react';
+import { ArrowLeft, Trash2 } from 'lucide-react';
 import { Button } from '../../../components/ui/button';
 import { APP_METADATA } from '../../constants';
 
@@ -42,10 +42,10 @@ export const ChatHeader = memo<ChatHeaderProps>(({
           variant="ghost"
           size="sm"
           onClick={onToggleFAQ}
-          className="text-white hover:bg-white/20"
+          className="text-white hover:bg-white/20 px-3"
           aria-label="Ver perguntas frequentes"
         >
-          <Book className="h-5 w-5" />
+          <span className="font-medium text-sm">FAQ</span>
         </Button>
         <Button
           variant="ghost"

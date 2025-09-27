@@ -3,7 +3,7 @@
  * Renders list of chat messages with processing indicator
  */
 
-import { memo } from 'react';
+import { memo, useRef, useEffect } from 'react';
 import { Card } from '../../../components/ui/card';
 import { Message } from '../../types';
 import { MessageItem } from './MessageItem';
@@ -21,6 +21,18 @@ export const MessageList = memo<MessageListProps>(({
   onSuggestionClick,
   onDownloadAudio
 }) => {
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  // Scroll automático quando novas mensagens chegam
+  useEffect(() => {
+    if (messages.length > 0) {
+      messagesEndRef.current?.scrollIntoView({ 
+        behavior: 'smooth',
+        block: 'start' 
+      });
+    }
+  }, [messages]);
+
   return (
     <div className="flex-1 overflow-y-auto p-4 space-y-4">
       {messages.map((message) => (
@@ -36,6 +48,9 @@ export const MessageList = memo<MessageListProps>(({
       {isProcessing && (
         <ProcessingIndicator />
       )}
+      
+      {/* Elemento para scroll automático */}
+      <div ref={messagesEndRef} />
     </div>
   );
 });

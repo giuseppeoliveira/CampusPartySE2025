@@ -462,18 +462,17 @@ export function ChatScreen({ onBackToWelcome }: ChatScreenProps) {
       ) : (
         <>
           {/* Botão FAQ quando primeira mensagem */}
-          {messages.length === 1 && (
-            <div className="p-3 bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-blue-100">
-              <Button
-                onClick={() => setShowFAQCategories(true)}
-                className="w-full bg-white hover:bg-blue-50 text-blue-700 border border-blue-200 shadow-sm transition-all duration-200 hover:shadow-md"
-                variant="outline"
-              >
-                <Book className="h-4 w-4 mr-2" />
-                Perguntas Frequentes
-              </Button>
-            </div>
-          )}
+          {/* Barra de Perguntas Frequentes - Sempre visível */}
+          <div className="p-3 bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-blue-100 sticky top-0 z-10">
+            <Button
+              onClick={() => setShowFAQCategories(true)}
+              className="w-full bg-white hover:bg-blue-50 text-blue-700 border border-blue-200 shadow-sm transition-all duration-200 hover:shadow-md"
+              variant="outline"
+            >
+              <Book className="h-4 w-4 mr-2" />
+              FAQ
+            </Button>
+          </div>
 
           {/* Chat Area */}
           <div className="flex-1 overflow-y-auto p-4 space-y-4">
