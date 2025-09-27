@@ -1,4 +1,5 @@
 import { useState, useCallback, useRef, useEffect } from 'react';
+import '../types/speech';
 
 export interface VoiceSettings {
   rate: number;        // Velocidade da fala (0.1 - 10)
@@ -59,7 +60,7 @@ export const useVoiceInteraction = (): UseVoiceInteractionReturn => {
   
   // Refs
   const utteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
-  const recognitionRef = useRef<SpeechRecognition | null>(null);
+  const recognitionRef = useRef<any>(null);
   
   // Verificar suporte
   const isSupported = {
@@ -100,7 +101,7 @@ export const useVoiceInteraction = (): UseVoiceInteractionReturn => {
   useEffect(() => {
     if (!isSupported.stt) return;
     
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
     const recognition = new SpeechRecognition();
     
     recognition.continuous = false;
@@ -113,7 +114,7 @@ export const useVoiceInteraction = (): UseVoiceInteractionReturn => {
       setError(null);
     };
     
-    recognition.onresult = (event) => {
+    recognition.onresult = (event: any) => {
       let finalTranscript = '';
       let interimTranscript = '';
       
@@ -133,7 +134,7 @@ export const useVoiceInteraction = (): UseVoiceInteractionReturn => {
       setIsListening(false);
     };
     
-    recognition.onerror = (event) => {
+    recognition.onerror = (event: any) => {
       setError(`Erro no reconhecimento de voz: ${event.error}`);
       setIsListening(false);
     };

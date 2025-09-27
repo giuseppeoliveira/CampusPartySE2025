@@ -1,12 +1,5 @@
 // Declarações de tipo para Web Speech API
 
-declare global {
-  interface Window {
-    SpeechRecognition: typeof SpeechRecognition;
-    webkitSpeechRecognition: typeof SpeechRecognition;
-  }
-}
-
 interface SpeechRecognition extends EventTarget {
   continuous: boolean;
   interimResults: boolean;
@@ -55,5 +48,12 @@ declare var SpeechRecognition: {
   prototype: SpeechRecognition;
   new (): SpeechRecognition;
 };
+
+declare global {
+  interface Window {
+    SpeechRecognition: typeof SpeechRecognition;
+    webkitSpeechRecognition: typeof SpeechRecognition;
+  }
+}
 
 export {};

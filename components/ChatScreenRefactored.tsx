@@ -11,7 +11,6 @@ import { MessageList } from '../src/components/chat/MessageList';
 import { MessageInput } from '../src/components/chat/MessageInput';
 import { SuggestionsPanel } from '../src/components/chat/SuggestionsPanel';
 import { useChatMessages, useMessageProcessing } from '../src/hooks/useChatMessages';
-import { useVoiceInteraction } from '../src/hooks/useVoiceInteraction';
 import { ANIMATION_DELAYS } from '../src/constants';
 
 export function ChatScreenRefactored({ onBackToWelcome }: ChatScreenProps) {
@@ -30,11 +29,8 @@ export function ChatScreenRefactored({ onBackToWelcome }: ChatScreenProps) {
   
   const { processMessage } = useMessageProcessing(addMessage, setIsProcessing);
   
-  const {
-    isRecording,
-    toggleRecording,
-    downloadAudio
-  } = useVoiceInteraction();
+  // Voice interaction não é mais necessário no ChatScreen principal
+  // Os controles de voz estão integrados diretamente nos componentes
 
   // Memoized handlers for performance optimization
   const handleSendMessage = useCallback(async () => {
@@ -109,7 +105,7 @@ export function ChatScreenRefactored({ onBackToWelcome }: ChatScreenProps) {
         messages={messages}
         isProcessing={isProcessing}
         onSuggestionClick={handleSuggestionClick}
-        onDownloadAudio={downloadAudio}
+        onDownloadAudio={() => console.log('Download de áudio')}
       />
 
       {/* Message Input */}
@@ -117,8 +113,6 @@ export function ChatScreenRefactored({ onBackToWelcome }: ChatScreenProps) {
         value={inputText}
         onChange={handleInputChange}
         onSend={handleSendMessage}
-        onToggleRecording={toggleRecording}
-        isRecording={isRecording}
         isProcessing={isProcessing}
       />
     </div>
