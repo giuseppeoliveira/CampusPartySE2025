@@ -20,22 +20,30 @@
 
 ## 📋 Branches
 
-| Branch | Propósito | Status |
-|--------|-----------|---------|
-| `main` | Produção estável | ✅ Ativo |
-| `projeto-funcional` | Backup funcional | ✅ Preservado |
-| `melhorias` | Desenvolvimento de features | ✅ Merged |
+| Branch | Propósito | Status | Deploy |
+|--------|-----------|---------|--------|
+| `prod` | **🚀 Produção** | ✅ Estável | https://campus-part.vercel.app |
+| `dev` | **🧪 Desenvolvimento** | ✅ Ativo | https://dev-campus-part.vercel.app |
+| `main` | Backup histórico | 📦 Arquivado | - |
+| `projeto-funcional` | Backup funcional | 📦 Preservado | - |
+| `melhorias` | Features antigas | 📦 Merged | - |
+
+### 🔄 Workflow das Branches:
+1. **Desenvolvimento**: Trabalhe na branch `dev` 
+2. **Teste**: Teste funcionalidades na `dev`
+3. **Aprovação**: Após aprovação → merge para `prod`
+4. **Deploy**: Auto-deploy para produção
 
 ## 🏗️ Pipelines CI/CD
 
 ### 🚀 Pipeline Principal (`ci-cd.yml`)
-- **Triggers**: Push/PR para `main` e `develop`
+- **Triggers**: Push/PR para `prod` e `dev`
 - **Jobs**:
   1. 🔍 **Lint & Type Check** - ESLint + TypeScript
   2. 🧪 **Unit Tests** - Vitest com cobertura
   3. 🏗️ **Build** - Compilação e artifacts
   4. 🔒 **Security Scan** - Auditoria de dependências
-  5. 🚀 **Deploy** - Deploy automático (apenas main)
+  5. 🚀 **Deploy** - Auto-deploy para dev e prod
   6. 📢 **Notification** - Status do pipeline
 
 ### 📊 Pipeline de Qualidade (`quality.yml`) 

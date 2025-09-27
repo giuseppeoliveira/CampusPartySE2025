@@ -2,9 +2,9 @@ name: 📊 Code Quality & Performance
 
 on:
   push:
-    branches: [ main, develop, melhorias ]
+    branches: [ prod, dev, melhorias ]
   pull_request:
-    branches: [ main ]
+    branches: [ prod, dev ]
   schedule:
     # Executa todos os dias às 2h da manhã (UTC)
     - cron: '0 2 * * *'
