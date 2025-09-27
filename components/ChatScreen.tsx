@@ -1,11 +1,12 @@
 import { useState } from 'react';
-import { Mic, Send, Trash2, Download, Share, ArrowLeft, ExternalLink, CheckCircle, Book } from 'lucide-react';
+import { Send, Trash2, Download, Share, ArrowLeft, ExternalLink, CheckCircle, Book } from 'lucide-react';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Card } from './ui/card';
 import { Badge } from './ui/badge';
 import { FAQService, FAQItem } from './FAQSystem';
 import { FAQCategories } from './FAQCategories';
+import { VoiceControls } from '../src/components/voice/VoiceControls';
 
 interface Message {
   id: number;
@@ -35,7 +36,6 @@ export function ChatScreen({ onBackToWelcome }: ChatScreenProps) {
     }
   ]);
   const [inputText, setInputText] = useState('');
-  const [isRecording, setIsRecording] = useState(false);
   const [showFAQCategories, setShowFAQCategories] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
 
@@ -281,12 +281,9 @@ export function ChatScreen({ onBackToWelcome }: ChatScreenProps) {
     }]);
   };
 
-  const handleVoiceRecord = () => {
-    setIsRecording(!isRecording);
-    if (!isRecording) {
-      console.log('Iniciando gravação...');
-    } else {
-      console.log('Finalizando gravação...');
+  const handleVoiceTranscript = (transcript: string) => {
+    if (transcript.trim()) {
+      setInputText(transcript);
     }
   };
 
@@ -474,26 +471,38 @@ export function ChatScreen({ onBackToWelcome }: ChatScreenProps) {
                   })}
                 </span>
                 
-                {message.type === 'assistant' && message.hasAudio && (
-                  <div className="flex space-x-1">
-                    <Button
-                      size="sm"
-                      variant="ghost"
-                      onClick={() => handleDownloadAudio(message.id)}
-                      className="h-6 w-6 p-0 hover:bg-green-100"
-                    >
-                      <Download className="h-3 w-3" />
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant="ghost"
-                      onClick={() => handleShareWhatsApp(message)}
-                      className="h-6 w-6 p-0 hover:bg-green-100"
-                    >
-                      <Share className="h-3 w-3" />
-                    </Button>
-                  </div>
-                )}
+                <div className="flex items-center space-x-2">
+                  {/* Voice Controls para mensagens da IA */}
+                  {message.type === 'assistant' && (
+                    <VoiceControls 
+                      text={message.text}
+                      showTTSControls={true}
+                      showSTTControls={false}
+                      className="opacity-70 hover:opacity-100 transition-opacity"
+                    />
+                  )}
+                  
+                  {message.type === 'assistant' && message.hasAudio && (
+                    <div className="flex space-x-1">
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={() => handleDownloadAudio(message.id)}
+                        className="h-6 w-6 p-0 hover:bg-green-100"
+                      >
+                        <Download className="h-3 w-3" />
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={() => handleShareWhatsApp(message)}
+                        className="h-6 w-6 p-0 hover:bg-green-100"
+                      >
+                        <Share className="h-3 w-3" />
+                      </Button>
+                    </div>
+                  )}
+                </div>
               </div>
             </Card>
           </div>
@@ -526,6 +535,7 @@ export function ChatScreen({ onBackToWelcome }: ChatScreenProps) {
               onKeyPress={handleKeyPress}
               placeholder="Pergunte sobre serviços públicos..."
               className="pr-12"
+              disabled={isProcessing}
             />
             <Button
               size="sm"
@@ -538,24 +548,14 @@ export function ChatScreen({ onBackToWelcome }: ChatScreenProps) {
             </Button>
           </div>
           
-          <Button
-            size="lg"
-            variant={isRecording ? "destructive" : "secondary"}
-            onClick={handleVoiceRecord}
-            disabled={isProcessing}
-            className="h-12 w-12 rounded-full p-0"
-          >
-            <Mic className={`h-5 w-5 ${isRecording ? 'animate-pulse' : ''}`} />
-          </Button>
+          {/* Voice Controls com STT */}
+          <VoiceControls 
+            onTranscriptChange={handleVoiceTranscript}
+            showTTSControls={false}
+            showSTTControls={true}
+            className="shrink-0"
+          />
         </div>
-
-        {isRecording && (
-          <div className="mt-2 text-center">
-            <span className="text-sm text-muted-foreground animate-pulse">
-              🔴 Gravando... Toque novamente para parar
-            </span>
-          </div>
-        )}
       </div>
     </div>
   );
