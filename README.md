@@ -4,7 +4,7 @@
 
 ## � O que é este projeto?
 
-O **Campus PArt - Projeto 2** é um assistente digital que ajuda brasileiros a navegar pelos serviços do governo federal. Ele entende perguntas em linguagem natural e fornece respostas precisas sobre CPF, INSS, SUS, Receita Federal e muito mais.
+O **Campus Party - Projeto 2** é um assistente digital que ajuda brasileiros a navegar pelos serviços do governo federal. Ele entende perguntas em linguagem natural e fornece respostas precisas sobre CPF, INSS, SUS, Receita Federal e muito mais.
 
 ### ✨ Principais funcionalidades:
 - 🤖 **Chat inteligente** com respostas baseadas em dados oficiais
