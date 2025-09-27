@@ -1,166 +1,100 @@
 # 🏛️ Campus PArt - Projeto 2
 
-> Sistema inteligente de assistência digital para serviços governamentais brasileiros
+> Chatbot inteligente especializado em serviços governamentais brasileiros desenvolvido para a Campus Party SE 2025
 
-## 🚀 Funcionalidades
+## � O que é este projeto?
 
-- **🤖 IA Interpretativa**: Compreende perguntas informais e as converte em consultas estruturadas
-- **📚 FAQ Inteligente**: Base de conhecimento com respostas oficiais sobre serviços gov.br
-- **🔗 Links Clicáveis**: Todos os links são automaticamente detectados e funcionais
-- **📱 Interface Responsiva**: Design moderno com shadcn/ui e Tailwind CSS
-- **🎯 Busca Avançada**: Algoritmo de pontuação para encontrar as melhores respostas
+O **Campus PArt - Projeto 2** é um assistente digital que ajuda brasileiros a navegar pelos serviços do governo federal. Ele entende perguntas em linguagem natural e fornece respostas precisas sobre CPF, INSS, SUS, Receita Federal e muito mais.
 
-## 🛠️ Tecnologias
+### ✨ Principais funcionalidades:
+- 🤖 **Chat inteligente** com respostas baseadas em dados oficiais
+- 🎤 **Reconhecimento de voz** - fale suas perguntas
+- 🔊 **Síntese de voz** - escute as respostas
+- � **Links diretos** para sites oficiais do governo
+- 📱 **Interface responsiva** - funciona no celular e computador
 
-- **Frontend**: React 18 + TypeScript + Vite
-- **UI**: shadcn/ui + Tailwind CSS + Lucide Icons  
-- **Testes**: Vitest + Testing Library
-- **Linting**: ESLint + TypeScript
-- **CI/CD**: GitHub Actions
+## � Como executar o projeto
 
-## 📋 Branches
+### Pré-requisitos
+- Node.js 18+ instalado
+- Git instalado
 
-| Branch | Propósito | Status | Deploy |
-|--------|-----------|---------|--------|
-| `prod` | **🚀 Produção** | ✅ Estável | https://campus-part.vercel.app |
-| `dev` | **🧪 Desenvolvimento** | ✅ Ativo | https://dev-campus-part.vercel.app |
-| `main` | Backup histórico | 📦 Arquivado | - |
-| `projeto-funcional` | Backup funcional | 📦 Preservado | - |
-| `melhorias` | Features antigas | 📦 Merged | - |
+### Passo a passo:
 
-### 🔄 Workflow das Branches:
-1. **Desenvolvimento**: Trabalhe na branch `dev` 
-2. **Teste**: Teste funcionalidades na `dev`
-3. **Aprovação**: Após aprovação → merge para `prod`
-4. **Deploy**: Auto-deploy para produção
-
-## 🏗️ Pipelines CI/CD
-
-### 🚀 Pipeline Principal (`ci-cd.yml`)
-- **Triggers**: Push/PR para `prod` e `dev`
-- **Jobs**:
-  1. 🔍 **Lint & Type Check** - ESLint + TypeScript
-  2. 🧪 **Unit Tests** - Vitest com cobertura
-  3. 🏗️ **Build** - Compilação e artifacts
-  4. 🔒 **Security Scan** - Auditoria de dependências
-  5. 🚀 **Deploy** - Auto-deploy para dev e prod
-  6. 📢 **Notification** - Status do pipeline
-
-### 📊 Pipeline de Qualidade (`quality.yml`) 
-- **Triggers**: Push, PR, schedule diário (2h UTC)
-- **Jobs**:
-  1. 📊 **Code Quality** - Análise ESLint e métricas
-  2. 🧪 **Test Coverage** - Cobertura de testes  
-  3. ⚡ **Performance** - Análise de bundle e performance
-  4. 📦 **Dependencies** - Auditoria e atualizações
-
-## 🚦 Status dos Pipelines
-
-[![🚀 CI/CD Pipeline](https://github.com/username/campus-part-projeto-2/workflows/🚀%20CI/CD%20Pipeline/badge.svg)](https://github.com/username/campus-part-projeto-2/actions)
-
-[![📊 Code Quality](https://github.com/username/campus-part-projeto-2/workflows/📊%20Code%20Quality%20&%20Performance/badge.svg)](https://github.com/username/campus-part-projeto-2/actions)
-
-## 🚀 Como Executar
-
-### Desenvolvimento Local
+1. **Clone o repositório**
 ```bash
-# 1. Instalar dependências
-npm install
-
-# 2. Executar em modo desenvolvimento
-npm run dev
-
-# 3. Abrir http://localhost:5173
+git clone https://github.com/giuseppeoliveira/CampusPartySE2025.git
+cd CampusPartySE2025
 ```
 
-### Testes
+2. **Instale as dependências**
 ```bash
-# Executar todos os testes
+npm install
+```
+
+3. **Execute em modo desenvolvimento**
+```bash
+npm run dev
+```
+
+4. **Abra no navegador**
+```
+http://localhost:5173
+```
+
+### Outros comandos úteis:
+
+```bash
+# Executar testes
 npm run test
 
-# Testes com interface
-npm run test:ui
+# Verificar tipos TypeScript
+npm run type-check
 
-# Testes com cobertura
-npm run test:coverage
-```
-
-### Build de Produção
-```bash
-# Build
+# Build para produção
 npm run build
 
-# Preview do build
+# Visualizar build de produção
 npm run preview
 ```
 
-### Validação Completa
+## 📱 Versão Mobile (APK)
+
+Este projeto também foi convertido em aplicativo Android usando Capacitor e Android Studio. Para gerar o APK:
+
 ```bash
-# Executa: type-check + lint + tests
-npm run validate
+# Build para produção
+npm run build
 
-# Pipeline completo (igual ao CI)
-npm run ci
+# Gerar projeto Android
+npx cap add android
+npx cap copy android
+
+# Abrir no Android Studio
+npx cap open android
 ```
 
-## 📁 Estrutura do Projeto
+## 🛠️ Tecnologias utilizadas
 
-```
-├── 📁 components/          # Componentes React
-│   ├── 📄 ChatScreen.tsx   # Tela principal do chat
-│   ├── 📄 FAQSystem.tsx    # Sistema de FAQ e IA
-│   ├── 📄 WelcomeScreen.tsx # Tela de boas-vindas
-│   └── 📁 ui/              # Componentes UI (shadcn)
-├── 📁 lib/                 # Utilitários
-├── 📁 src/                 # Código fonte principal
-│   ├── 📄 main.tsx         # Entry point
-│   └── 📁 test/            # Configuração de testes
-├── 📁 styles/              # Estilos globais
-├── 📁 .github/workflows/   # Pipelines CI/CD
-├── 📄 package.json         # Dependências e scripts
-├── 📄 vite.config.ts       # Configuração Vite
-├── 📄 vitest.config.ts     # Configuração testes
-└── 📄 tsconfig.json        # Configuração TypeScript
-```
+- **Frontend**: React 18 + TypeScript + Vite
+- **UI/UX**: Tailwind CSS + shadcn/ui + Lucide Icons
+- **Voz**: Web Speech API (STT + TTS)
+- **Mobile**: Capacitor + Android Studio
+- **Testes**: Vitest + Testing Library
+- **Qualidade**: ESLint + TypeScript
 
-## 🧪 Testes
+## 🎯 Campus Party SE 2025
 
-### Cobertura de Testes
-- ✅ **FAQService**: Interpretação IA, busca FAQ, geração de respostas  
-- ✅ **Componentes**: Renderização e interações
-- ✅ **Links**: Detecção e funcionalidade de links clicáveis
-- ✅ **Formatação**: Renderização de markdown
+Este projeto foi desenvolvido especialmente para a **Campus Party Sergipe 2025**, demonstrando:
+- Integração com APIs nativas do navegador
+- Clean Architecture e boas práticas
+- Interface acessível e intuitiva
+- Conversão para aplicativo móvel
 
-### Tipos de Teste
-- **Unit Tests**: Lógica de negócio e funções puras
-- **Component Tests**: Renderização e comportamento de componentes
-- **Integration Tests**: Fluxo completo de perguntas e respostas
+## 🤝 Contribuições
 
-## 🔧 Scripts Disponíveis
-
-| Script | Descrição |
-|--------|-----------|
-| `npm run dev` | Servidor de desenvolvimento |
-| `npm run build` | Build de produção |
-| `npm run preview` | Preview do build |
-| `npm run lint` | Executar ESLint |
-| `npm run lint:fix` | Corrigir problemas ESLint |
-| `npm run test` | Executar testes |
-| `npm run test:ui` | Testes com interface |
-| `npm run test:coverage` | Testes com cobertura |
-| `npm run type-check` | Verificação TypeScript |
-| `npm run validate` | Validação completa |
-| `npm run ci` | Pipeline CI local |
-
-## 🎯 Próximas Etapas
-
-- [ ] 📊 Implementar métricas de uso
-- [ ] 🔍 Melhorar algoritmo de busca
-- [ ] 📱 Otimização mobile
-- [ ] 🎨 Temas personalizáveis
-- [ ] 🔊 Síntese de voz real
-- [ ] 📈 Analytics e relatórios
+Projeto desenvolvido por **Giuseppe Oliveira** com auxílio de IA para acelerar o desenvolvimento e implementação de funcionalidades avançadas.
 
 ---
 
-🚀 **Developed with ❤️ for Brazilian Government Services**
+� **Dica**: Experimente falar "Como fazer CPF online?" no microfone!
