@@ -7,6 +7,8 @@ import { Badge } from './ui/badge';
 import { FAQService, FAQItem } from './FAQSystem';
 import { FAQCategories } from './FAQCategories';
 import { VoiceControls } from '../src/components/voice/VoiceControls';
+import { ModernLogo } from './ui/ModernLogo';
+import { ToastManager } from './ui/Toast';
 
 interface Message {
   id: number;
@@ -29,7 +31,7 @@ export function ChatScreen({ onBackToWelcome }: ChatScreenProps) {
   const [messages, setMessages] = useState<Message[]>([
     {
       id: 1,
-      text: "Olá! Sou seu Companheiro Digital especializado em sites governamentais brasileiros. Posso ajudá-lo com dúvidas sobre gov.br, INSS, Receita Federal, SUS, e muito mais. Como posso auxiliá-lo hoje?",
+      text: "Olá! Sou seu Companheiro Digital especializado em sites governamentais brasileiros. Posso ajudá-lo com dúvidas sobre gov.br, INSS, Receita Federal, SUS e muito mais. Como posso auxiliá-lo hoje?",
       type: "assistant",
       timestamp: new Date(),
       hasAudio: true
@@ -38,14 +40,12 @@ export function ChatScreen({ onBackToWelcome }: ChatScreenProps) {
   const [inputText, setInputText] = useState('');
   const [showFAQCategories, setShowFAQCategories] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
-
-  const govSuggestions = [
-    "Como acessar o Meu INSS?",
-    "Como fazer o CPF online?",
-    "Como consultar benefícios sociais?",
-    "Como fazer o Cartão Nacional de Saúde SUS?",
-    "Como tirar certidão de nascimento online?"
-  ];
+  const [toasts, setToasts] = useState<Array<{
+    id: string;
+    message: string;
+    type: 'success' | 'error' | 'warning' | 'info';
+    duration?: number;
+  }>>([]);
 
   const handleSendMessage = async () => {
     if (inputText.trim() && !isProcessing) {
@@ -274,7 +274,7 @@ export function ChatScreen({ onBackToWelcome }: ChatScreenProps) {
   const handleClearConversation = () => {
     setMessages([{
       id: 1,
-      text: "Olá! Sou seu Companheiro Digital especializado em sites governamentais brasileiros. Posso ajudá-lo com dúvidas sobre gov.br, INSS, Receita Federal, SUS, e muito mais. Como posso auxiliá-lo hoje?",
+      text: "Olá! Sou seu Companheiro Digital especializado em sites governamentais brasileiros. Posso ajudá-lo com dúvidas sobre gov.br, INSS, Receita Federal, SUS e muito mais. Como posso auxiliá-lo hoje?",
       type: "assistant",
       timestamp: new Date(),
       hasAudio: true
@@ -283,8 +283,51 @@ export function ChatScreen({ onBackToWelcome }: ChatScreenProps) {
 
   const handleVoiceTranscript = (transcript: string) => {
     if (transcript.trim()) {
+      const cleanedTranscript = transcript.toLowerCase();
+      
+      // Comandos de voz para limpar
+      if (cleanedTranscript.includes('apagar') || 
+          cleanedTranscript.includes('limpar') || 
+          cleanedTranscript.includes('deletar') ||
+          cleanedTranscript === 'clear') {
+        setInputText('');
+        showToast('Texto limpo!', 'success');
+        return;
+      }
+      
       setInputText(transcript);
     }
+  };
+
+  const showToast = (message: string, type: 'success' | 'error' | 'warning' | 'info' = 'info') => {
+    const newToast = {
+      id: Date.now().toString(),
+      message,
+      type,
+      duration: type === 'error' ? 6000 : 4000
+    };
+    setToasts(prev => [...prev, newToast]);
+  };
+
+  const removeToast = (id: string) => {
+    setToasts(prev => prev.filter(toast => toast.id !== id));
+  };
+
+  const handleVoiceError = (error: string) => {
+    // Criar mensagem mais amigável para os erros comuns
+    let friendlyMessage = error;
+    
+    if (error.includes('Permissão negada') || error.includes('not-allowed')) {
+      friendlyMessage = '🎤 Permita o acesso ao microfone nas configurações do navegador';
+    } else if (error.includes('not-supported')) {
+      friendlyMessage = '🎤 Seu navegador não suporta reconhecimento de voz';
+    } else if (error.includes('network')) {
+      friendlyMessage = '🌐 Verifique sua conexão com a internet';
+    } else if (error.includes('no-speech')) {
+      friendlyMessage = '🔇 Nenhuma fala detectada. Tente falar mais próximo do microfone';
+    }
+    
+    showToast(friendlyMessage, 'error');
   };
 
   const handleDownloadAudio = (messageId: number) => {
@@ -327,15 +370,45 @@ export function ChatScreen({ onBackToWelcome }: ChatScreenProps) {
     setInputText(suggestion);
   };
 
-  const handleFAQQuestionSelect = (question: string) => {
+  const handleFAQQuestionSelect = async (question: string) => {
     if (!isProcessing) {
-      setInputText(question);
+      setIsProcessing(true);
       setShowFAQCategories(false);
-      // Auto-enviar a pergunta
-      setTimeout(() => {
-        setInputText(question);
-        setTimeout(() => handleSendMessage(), 100);
-      }, 50);
+      
+      // Criar mensagem do usuário com a pergunta
+      const newUserMessage: Message = {
+        id: Date.now(),
+        text: question,
+        type: 'user',
+        timestamp: new Date()
+      };
+      
+      setMessages(prev => [...prev, newUserMessage]);
+      
+      // Simular processamento
+      await new Promise(resolve => setTimeout(resolve, 800));
+      
+      // Buscar resposta do FAQ
+      const faqResult = FAQService.searchFAQ(question);
+      const interpretation = FAQService.interpretQuestion(question);
+      
+      if (faqResult) {
+        const assistantResponse: Message = {
+          id: Date.now() + 1,
+          text: faqResult.answer,
+          type: 'assistant',
+          timestamp: new Date(),
+          hasAudio: true,
+          faqItem: faqResult,
+          isFromFAQ: true,
+          aiSuggestions: interpretation.suggestions,
+          interpretedQuery: interpretation.confidence > 0.7 ? interpretation.interpretedQuery : undefined
+        };
+        
+        setMessages(prev => [...prev, assistantResponse]);
+      }
+      
+      setIsProcessing(false);
     }
   };
 
@@ -352,6 +425,7 @@ export function ChatScreen({ onBackToWelcome }: ChatScreenProps) {
           >
             <ArrowLeft className="h-5 w-5" />
           </Button>
+          <ModernLogo size={32} className="shrink-0" />
           <div>
             <h1 className="font-medium">Companheiro Digital</h1>
             <p className="text-xs opacity-90">Especialista em gov.br</p>
@@ -377,41 +451,33 @@ export function ChatScreen({ onBackToWelcome }: ChatScreenProps) {
         </div>
       </div>
 
-      {/* Sugestões rápidas ou FAQ Categorias */}
+      {/* FAQ Categorias (tela cheia) ou Chat Area */}
       {showFAQCategories ? (
-        <FAQCategories onQuestionSelect={handleFAQQuestionSelect} />
-      ) : messages.length === 1 ? (
-        <div className="p-4 bg-blue-50">
-          <div className="flex items-center justify-between mb-2">
-            <p className="text-sm text-blue-800">Perguntas frequentes:</p>
-            <Button
-              size="sm"
-              variant="ghost"
-              onClick={() => setShowFAQCategories(true)}
-              className="text-blue-700 hover:bg-blue-200 h-6 px-2"
-            >
-              <Book className="h-3 w-3 mr-1" />
-              Ver todas
-            </Button>
-          </div>
-          <div className="flex flex-wrap gap-2">
-            {govSuggestions.map((suggestion, index) => (
-              <Badge
-                key={index}
-                variant="secondary"
-                className="cursor-pointer hover:bg-blue-200 text-xs"
-                onClick={() => handleSuggestionClick(suggestion)}
-              >
-                {suggestion}
-              </Badge>
-            ))}
-          </div>
+        <div className="flex-1 overflow-hidden">
+          <FAQCategories 
+            onQuestionSelect={handleFAQQuestionSelect}
+            onBack={() => setShowFAQCategories(false)}
+          />
         </div>
-      ) : null}
+      ) : (
+        <>
+          {/* Botão FAQ quando primeira mensagem */}
+          {messages.length === 1 && (
+            <div className="p-3 bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-blue-100">
+              <Button
+                onClick={() => setShowFAQCategories(true)}
+                className="w-full bg-white hover:bg-blue-50 text-blue-700 border border-blue-200 shadow-sm transition-all duration-200 hover:shadow-md"
+                variant="outline"
+              >
+                <Book className="h-4 w-4 mr-2" />
+                Perguntas Frequentes
+              </Button>
+            </div>
+          )}
 
-      {/* Chat Area */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-4">
-        {messages.map((message) => (
+          {/* Chat Area */}
+          <div className="flex-1 overflow-y-auto p-4 space-y-4">
+            {messages.map((message) => (
           <div
             key={message.id}
             className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}
@@ -476,6 +542,7 @@ export function ChatScreen({ onBackToWelcome }: ChatScreenProps) {
                   {message.type === 'assistant' && (
                     <VoiceControls 
                       text={message.text}
+                      onError={handleVoiceError}
                       showTTSControls={true}
                       showSTTControls={false}
                       className="opacity-70 hover:opacity-100 transition-opacity"
@@ -523,17 +590,20 @@ export function ChatScreen({ onBackToWelcome }: ChatScreenProps) {
             </Card>
           </div>
         )}
-      </div>
+          </div>
+        </>
+      )}
 
-      {/* Input Area */}
-      <div className="p-4 border-t bg-card">
-        <div className="flex gap-2 items-center">
-          <div className="flex-1 relative">
+      {/* Input Area - só mostrar quando não está em FAQ */}
+      {!showFAQCategories && (
+        <div className="p-4 border-t bg-card">
+          <div className="flex gap-2 items-center">
+            <div className="flex-1 relative">
             <Input
               value={inputText}
               onChange={(e) => setInputText(e.target.value)}
               onKeyPress={handleKeyPress}
-              placeholder="Pergunte sobre serviços públicos..."
+              placeholder=""
               className="pr-12"
               disabled={isProcessing}
             />
@@ -551,12 +621,17 @@ export function ChatScreen({ onBackToWelcome }: ChatScreenProps) {
           {/* Voice Controls com STT */}
           <VoiceControls 
             onTranscriptChange={handleVoiceTranscript}
+            onError={handleVoiceError}
             showTTSControls={false}
             showSTTControls={true}
             className="shrink-0"
           />
         </div>
       </div>
+      )}
+      
+      {/* Toast Manager */}
+      <ToastManager toasts={toasts} onRemoveToast={removeToast} />
     </div>
   );
 }
