@@ -159,8 +159,9 @@ export const useVoiceInteraction = (): UseVoiceInteractionReturn => {
   const speak = useCallback((text: string) => {
     if (!isSupported.tts || !text.trim()) return;
     
-    // Parar qualquer fala anterior
+    // Parar qualquer fala anterior e limpar erros
     speechSynthesis.cancel();
+    setError(null);
     
     const utterance = new SpeechSynthesisUtterance(text);
     utterance.rate = voiceSettings.rate;
@@ -183,7 +184,10 @@ export const useVoiceInteraction = (): UseVoiceInteractionReturn => {
     };
     
     utterance.onerror = (event) => {
-      setError(`Erro na síntese de voz: ${event.error}`);
+      // Não mostrar erro quando a fala é interrompida manualmente
+      if (event.error !== 'interrupted' && event.error !== 'canceled') {
+        setError(`Erro na síntese de voz: ${event.error}`);
+      }
       setIsSpeaking(false);
       setIsPaused(false);
     };
@@ -205,6 +209,7 @@ export const useVoiceInteraction = (): UseVoiceInteractionReturn => {
       speechSynthesis.cancel();
       setIsSpeaking(false);
       setIsPaused(false);
+      setError(null); // Limpar qualquer erro quando paramos manualmente
     }
   }, [isSupported.tts]);
   
