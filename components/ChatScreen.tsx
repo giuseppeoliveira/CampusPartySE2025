@@ -104,10 +104,49 @@ export function ChatScreen({ onBackToWelcome }: ChatScreenProps) {
     }
   };
 
+  // Função para renderizar texto com links clicáveis
+  const renderTextWithClickableLinks = (text: string) => {
+    // Regex melhorada para detectar URLs incluindo gov.br, sites sem www, etc.
+    const urlRegex = /(https?:\/\/[^\s]+|www\.[^\s]+|(?:[a-zA-Z0-9-]+\.)+(?:gov\.br|com|br|org|net|edu|mil)(?:\/[^\s]*)?)/gi;
+    const parts = text.split(urlRegex);
+    
+    return (
+      <>
+        {parts.map((part, index) => {
+          if (part.match(urlRegex)) {
+            let url = part;
+            // Adiciona https:// se necessário
+            if (!url.startsWith('http')) {
+              url = `https://${url}`;
+            }
+            return (
+              <a
+                key={index}
+                href={url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-600 hover:text-blue-800 underline font-medium transition-colors cursor-pointer inline-flex items-center"
+                onClick={(e) => {
+                  e.preventDefault();
+                  window.open(url, '_blank', 'noopener,noreferrer');
+                }}
+                title={`Abrir ${url} em nova aba`}
+              >
+                {part}
+                <ExternalLink className="h-3 w-3 ml-1 inline" />
+              </a>
+            );
+          }
+          return <span key={index}>{part}</span>;
+        })}
+      </>
+    );
+  };
+
   const renderFAQResponse = (faqItem: FAQItem) => {
     return (
       <div className="space-y-3">
-        <p className="break-words">{faqItem.answer}</p>
+        <div className="break-words">{renderTextWithClickableLinks(faqItem.answer)}</div>
         
         {faqItem.steps && faqItem.steps.length > 0 && (
           <div className="bg-blue-50 p-3 rounded-lg">
@@ -121,7 +160,7 @@ export function ChatScreen({ onBackToWelcome }: ChatScreenProps) {
                   <span className="font-medium text-blue-700 mr-2 min-w-[20px]">
                     {index + 1}.
                   </span>
-                  <span className="text-blue-800">{step}</span>
+                  <div className="text-blue-800">{renderTextWithClickableLinks(step)}</div>
                 </li>
               ))}
             </ol>
@@ -130,13 +169,28 @@ export function ChatScreen({ onBackToWelcome }: ChatScreenProps) {
         
         {faqItem.relatedLinks && faqItem.relatedLinks.length > 0 && (
           <div className="border-t pt-2">
-            <p className="text-sm font-medium text-gray-700 mb-1">Links úteis:</p>
-            <div className="space-y-1">
+            <p className="text-sm font-medium text-gray-700 mb-1">🔗 Links úteis:</p>
+            <div className="space-y-2">
               {faqItem.relatedLinks.map((link, index) => (
-                <div key={index} className="flex items-center text-sm">
-                  <ExternalLink className="h-3 w-3 mr-1 text-blue-600" />
-                  <span className="text-blue-600">{link.text}</span>
-                  <span className="text-gray-500 ml-1">({link.url})</span>
+                <div key={index} className="p-2 bg-gray-50 rounded-md hover:bg-gray-100 transition-colors">
+                  <a
+                    href={link.url.startsWith('http') ? link.url : `https://${link.url}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center text-sm text-blue-600 hover:text-blue-800 font-medium transition-colors cursor-pointer group"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      const url = link.url.startsWith('http') ? link.url : `https://${link.url}`;
+                      window.open(url, '_blank', 'noopener,noreferrer');
+                    }}
+                    title={`Abrir ${link.text} em nova aba`}
+                  >
+                    <ExternalLink className="h-4 w-4 mr-2 text-blue-600 group-hover:text-blue-800" />
+                    <div className="flex-1">
+                      <div className="font-medium">{link.text}</div>
+                      <div className="text-xs text-gray-500">{link.url}</div>
+                    </div>
+                  </a>
                 </div>
               ))}
             </div>
@@ -325,7 +379,7 @@ export function ChatScreen({ onBackToWelcome }: ChatScreenProps) {
               
               {message.type === 'assistant' && message.faqItem ? 
                 renderFAQResponse(message.faqItem) : 
-                <p className="break-words">{message.text}</p>
+                <div className="break-words">{renderTextWithClickableLinks(message.text)}</div>
               }
               
               {/* Sugestões de IA */}
