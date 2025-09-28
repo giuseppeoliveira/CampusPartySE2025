@@ -1,10 +1,10 @@
-# 📖 Diário de Criação - Campus PArt Projeto 2
+# 📖 Diário de Criação 
 
 > Por Giuseppe Oliveira - Campus Party SE 2025
 
 ## 🎯 Introdução
 
-Este é o diário da **segunda versão** do meu projeto Campus PArt, criado especialmente para a Campus Party Sergipe 2025. Aqui vou contar dia a dia como foi o processo, os desafios enfrentados e o que aprendi em cada etapa.
+Este é o diário da **segunda versão** do meu projeto Companheiro Digital, criado especialmente para a Campus Party Sergipe 2025. Aqui vou contar dia a dia como foi o processo, os desafios enfrentados e o que aprendi em cada etapa.
 
 **Importante**: Este projeto foi desenvolvido por mim com ajuda de Inteligência Artificial para acelerar o desenvolvimento e me ensinar novas técnicas. A IA não fez tudo sozinha - ela foi uma ferramenta para me ajudar a aprender e implementar funcionalidades mais avançadas.
 
