@@ -1,4 +1,4 @@
-# 🔧 Notas Técnicas - Campus PArt Projeto 2
+# 🔧 Notas Técnicas 
 
 > Documentação técnica completa por Giuseppe Oliveira
 
